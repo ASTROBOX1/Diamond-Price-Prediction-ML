@@ -1,8 +1,11 @@
 # 💎 Diamond Price Prediction System
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/ASTROBOX1/Diamond-Price-Prediction-ML)
+
 A production-ready machine learning system for estimating diamond prices based on the "4Cs" (Carat, Cut, Color, Clarity) and physical dimensions.
 
 ## 🚀 Key Features
+
 - **Modular pipeline**: Dedicated scripts for cleaning, feature engineering, and training.
 - **Robust Cleaning**: Automated handling of NaNs, typos (e.g., `Very Geod`), and zero-dimension outliers.
 - **High Performance**: Random Forest model with **98.04% R² Accuracy**.
@@ -12,6 +15,7 @@ A production-ready machine learning system for estimating diamond prices based o
 ---
 
 ## 📁 Project Structure
+
 - `src/`: Core logic (preprocessing, training, inference).
 - `app/`: FastAPI application and schemas.
 - `models/`: Trained model and encoder artifacts.
@@ -23,30 +27,37 @@ A production-ready machine learning system for estimating diamond prices based o
 ## 🛠 Setup & Installation
 
 ### Prerequisites
+
 - Python 3.12+
 - Docker (optional)
 
 ### Local Setup
+
 1. **Install dependencies**:
+
    ```bash
    pip install -r requirements.txt
    ```
 
 2. **Train the model**:
+
    ```bash
    export PYTHONPATH=$PYTHONPATH:$(pwd)/src
    python3 src/train.py
    ```
 
 3. **Run the API server**:
+
    ```bash
    uvicorn app.main:app --reload
    ```
+
    Visit `http://localhost:8000/docs` to access the interactive API documentation.
 
 ---
 
 ## 🐳 Docker Deployment
+
 Build and run the system as a containerized service:
 
 ```bash
@@ -57,6 +68,7 @@ docker run -p 8000:8000 diamond-predictor
 ---
 
 ## 📊 API Endpoints
+
 - `GET /`: API Health Check.
 - `POST /predict`: Predict diamond price.
   - **Input**: Carat, Cut, Color, Clarity, depth, table, x, y, z.
@@ -65,7 +77,9 @@ docker run -p 8000:8000 diamond-predictor
 ---
 
 ## 🧪 Testing
+
 Run project tests using `pytest`:
+
 ```bash
 pytest tests/
 ```
