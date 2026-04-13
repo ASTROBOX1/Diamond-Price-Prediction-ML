@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  api:
+    build: .
+    image: diamond-predictor:latest
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./models:/app/models
+    environment:
+      - LOG_LEVEL=info
+    restart: always
+
+# Note: Volumes used for local model persistence/cache if needed

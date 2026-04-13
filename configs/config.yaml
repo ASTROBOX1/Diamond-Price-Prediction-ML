@@ -1,0 +1,19 @@
+data:
+  raw_path: "data/raw/diamonds.csv"
+  processed_path: "data/processed/diamonds_processed.csv"
+
+model:
+  path: "models/model.joblib"
+  params:
+    n_estimators: 100
+    random_state: 42
+
+features:
+  numerical: ["carat", "depth", "table", "x", "y", "z"]
+  categorical: ["cut", "color", "clarity"]
+  target: "price"
+
+encoding:
+  cut: ["Fair", "Good", "Very Good", "Premium", "Ideal"]
+  color: ["J", "I", "H", "G", "F", "E", "D"]
+  clarity: ["I1", "SI2", "SI1", "VS2", "VS1", "VVS2", "VVS1", "IF"]
