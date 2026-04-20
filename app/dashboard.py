@@ -57,9 +57,16 @@ def load_predictor():
 def load_market_data():
     # Loading raw data for the analytics portion
     try:
-        df = pd.read_csv("data/raw/diamonds.csv")
+        # Use absolute path relative to this file
+        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        data_path = os.path.join(base_path, "data/raw/diamonds.csv")
+        df = pd.read_csv(data_path)
         return df
-    except:
+    except FileNotFoundError:
+        st.warning("📊 Dataset not found. Analytics will be unavailable.")
+        return None
+    except Exception as e:
+        st.warning(f"📊 Error loading dataset: {str(e)}")
         return None
 
 predictor = load_predictor()
@@ -120,9 +127,9 @@ with left_col:
         # We also need x, y, z for the model. Let's estimate them based on carat for simplicity in the demo
         # or just ask for them. Real jewelry systems usually have these.
         # For a better UI, we'll estimate them based on carat if not provided.
-        x = st.number_input("Length (x)", 0.0, 10.0, 6.4)
-        y = st.number_input("Width (y)", 0.0, 10.0, 6.4)
-        z = st.number_input("Depth (z)", 0.0, 10.0, 4.0)
+        x = st.number_input("Length (x)", 1.0, 10.0, 6.4, help="Must be greater than 0")
+        y = st.number_input("Width (y)", 1.0, 10.0, 6.4, help="Must be greater than 0")
+        z = st.number_input("Depth (z)", 1.0, 10.0, 4.0, help="Must be greater than 0")
         
         input_data = {
             "carat": carat,
@@ -136,13 +143,28 @@ with left_col:
             "z": z
         }
         
-        if st.button("Generate Valuation"):
+        if st.button("Generate Valuation", use_container_width=True):
             try:
-                prediction = predictor.predict(input_data)
-                st.markdown(f"### Predicted Value: :blue[${prediction:,.2f}]")
-                st.success("✅ Valuation completed using optimized Random Forest Regressor.")
+                with st.spinner("⚙️ Processing valuation..."):
+                    # Validate inputs
+                    if x <= 0 or y <= 0 or z <= 0:
+                        st.error("❌ Dimensions (x, y, z) must be positive values.")
+                        st.stop()
+                    
+                    prediction = predictor.predict(input_data)
+                    
+                    # Validate prediction output
+                    if prediction < 0:
+                        st.error("❌ Model returned invalid prediction. Please check input parameters.")
+                        st.stop()
+                    
+                    st.markdown(f"### Predicted Value: :blue[${prediction:,.2f}]")
+                    st.success("✅ Valuation completed using optimized Random Forest Regressor.")
+            except ValueError as e:
+                st.error(f"❌ Invalid input: {str(e)}")
             except Exception as e:
-                st.error(f"Valuation Error: {e}")
+                st.error(f"❌ Valuation Error: {str(e)}")
+                st.info("💡 Please ensure all inputs are valid and try again.")
         
         st.markdown("</div>", unsafe_allow_html=True)
         
@@ -163,30 +185,38 @@ with right_col:
     st.subheader("📊 Market Analytics")
     
     if df is not None:
+        @st.cache_data
+        def create_scatter_chart():
+            fig_scatter = px.scatter(
+                df.sample(min(2000, len(df))), 
+                x="carat", 
+                y="price", 
+                color="cut",
+                title="Price vs. Carat Correlation (Sampled Market Data)",
+                template="plotly_dark",
+                color_discrete_sequence=px.colors.qualitative.Alphabet
+            )
+            fig_scatter.update_layout(plot_bgcolor='#0F172A', paper_bgcolor='#0F172A')
+            return fig_scatter
+        
+        @st.cache_data
+        def create_box_chart():
+            fig_box = px.box(
+                df, 
+                x="cut", 
+                y="price", 
+                color="cut",
+                title="Valuation Distribution by Cut Grade",
+                template="plotly_dark"
+            )
+            fig_box.update_layout(plot_bgcolor='#0F172A', paper_bgcolor='#0F172A')
+            return fig_box
+        
         # Market Price vs Carat (Sampled)
-        fig_scatter = px.scatter(
-            df.sample(2000), 
-            x="carat", 
-            y="price", 
-            color="cut",
-            title="Price vs. Carat Correlation (Sampled Market Data)",
-            template="plotly_dark",
-            color_discrete_sequence=px.colors.qualitative.Alphabet
-        )
-        fig_scatter.update_layout(plot_bgcolor='#0F172A', paper_bgcolor='#0F172A')
-        st.plotly_chart(fig_scatter, use_container_width=True)
+        st.plotly_chart(create_scatter_chart(), use_container_width=True)
         
         # Price Distribution by Cut
-        fig_box = px.box(
-            df, 
-            x="cut", 
-            y="price", 
-            color="cut",
-            title="Valuation Distribution by Cut Grade",
-            template="plotly_dark"
-        )
-        fig_box.update_layout(plot_bgcolor='#0F172A', paper_bgcolor='#0F172A')
-        st.plotly_chart(fig_box, use_container_width=True)
+        st.plotly_chart(create_box_chart(), use_container_width=True)
     else:
         st.warning("Connect a dataset to view market analytics.")
 
