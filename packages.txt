@@ -1,2 +1,0 @@
-# Streamlit Cloud System Dependencies (if needed)
-# Leave empty for now - plotly and others are pure Python
