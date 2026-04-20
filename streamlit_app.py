@@ -8,11 +8,12 @@ import streamlit as st
 # Add the project directory to the path to ensure imports work correctly
 sys.path.append(os.path.dirname(__file__))
 
-# Set up error logging for debugging
+# Set up page config FIRST, before any other Streamlit commands
 st.set_page_config(
-    page_title="Diamond Price Prediction",
+    page_title="Diamond Market Intel | AI Valuator",
     page_icon="💎",
     layout="wide",
+    initial_sidebar_state="expanded",
 )
 
 try:

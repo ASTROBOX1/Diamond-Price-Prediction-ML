@@ -20,12 +20,8 @@ except ImportError as e:
 from src.predict import DiamondPricePredictor
 
 # --- CONFIGURATION & STYLING ---
-st.set_page_config(
-    page_title="Diamond Market Intel | AI Valuator",
-    page_icon="💎",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
+# NOTE: st.set_page_config is already called in streamlit_app.py
+# Calling it here would cause: StreamlitSetPageConfigMustBeFirstCommandError
 
 # Custom SaaS Branding (Electric Blue Accent)
 st.markdown("""
