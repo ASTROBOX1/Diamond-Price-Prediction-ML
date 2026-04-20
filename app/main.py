@@ -4,27 +4,34 @@ import sys
 
 # Add src to path to import predictors
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.append(os.path.join(os.getcwd(), 'src'))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
 
 from src.predict import DiamondPricePredictor
-from app.schemas import DiamondRequest, PricePrediction
+try:
+    from app.schemas import DiamondRequest, PricePrediction
+except ModuleNotFoundError:
+    from schemas import DiamondRequest, PricePrediction
 
-app = FastAPI(
-    title="Diamond Price Prediction API",
-    description="Professional ML system for estimating diamond prices based on measurements and quality grades.",
-    version="1.0.0"
-)
+from contextlib import asynccontextmanager
 
 # Initialize predictor lazily or at startup
 predictor = None
 
-@app.on_event("startup")
-def load_model():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     global predictor
     try:
         predictor = DiamondPricePredictor()
     except Exception as e:
         print(f"Error loading model: {e}. API will return 503 until model is trained.")
+    yield
+
+app = FastAPI(
+    title="Diamond Price Prediction API",
+    description="Professional ML system for estimating diamond prices based on measurements and quality grades.",
+    version="1.0.0",
+    lifespan=lifespan
+)
 
 @app.get("/")
 def read_root():
