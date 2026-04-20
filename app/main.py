@@ -3,9 +3,10 @@ import os
 import sys
 
 # Add src to path to import predictors
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(os.path.join(os.getcwd(), 'src'))
 
-from predict import DiamondPricePredictor
+from src.predict import DiamondPricePredictor
 from app.schemas import DiamondRequest, PricePrediction
 
 app = FastAPI(

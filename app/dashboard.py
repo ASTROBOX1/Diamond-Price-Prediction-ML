@@ -7,8 +7,9 @@ import sys
 import yaml
 
 # Add src to path to import predictor
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(os.path.join(os.getcwd(), 'src'))
-from predict import DiamondPricePredictor
+from src.predict import DiamondPricePredictor
 
 # --- CONFIGURATION & STYLING ---
 st.set_page_config(
