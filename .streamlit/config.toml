@@ -1,0 +1,11 @@
+[theme]
+# Primary accent color
+primaryColor="#38bdf8"
+# Background color
+backgroundColor="#020617"
+# Secondary background color
+secondaryBackgroundColor="#0f172a"
+# Text color
+textColor="#f8fafc"
+# Font
+font="sans serif"

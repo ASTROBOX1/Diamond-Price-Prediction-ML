@@ -61,7 +61,7 @@ def run_training():
     
     # 7. Save Model
     os.makedirs(os.path.dirname(config['model']['path']), exist_ok=True)
-    joblib.dump(model, config['model']['path'])
+    joblib.dump(model, config['model']['path'], compress=9)
     logger.info(f"Model saved to {config['model']['path']}")
 
 if __name__ == "__main__":
