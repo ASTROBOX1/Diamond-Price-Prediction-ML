@@ -1,14 +1,22 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
-import plotly.graph_objects as go
 import os
 import sys
 import yaml
 
 # Add src to path to import predictor
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.append(os.path.join(os.getcwd(), 'src'))
+sys.path.append(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src'))
+
+# Import plotly AFTER path setup to ensure it works
+try:
+    import plotly.express as px
+    import plotly.graph_objects as go
+except ImportError as e:
+    st.error(f"❌ Failed to import Plotly: {str(e)}")
+    st.stop()
+
+# Import predictor
 from src.predict import DiamondPricePredictor
 
 # --- CONFIGURATION & STYLING ---
