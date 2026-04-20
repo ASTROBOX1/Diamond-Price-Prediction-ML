@@ -16,6 +16,3 @@ toolbarMode = "viewer"
 
 [logger]
 level = "info"
-
-[client.toolbarMode]
-showErrorDetails = true
